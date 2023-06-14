@@ -1,0 +1,18 @@
+
+@baseUrl= http://localhost:3000/
+
+GET {{baseUrl}}
+
+###
+
+POST {{baseUrl}}/students
+Content-Type: application/json
+{
+    "name": "hieu",
+    "age": 26,
+    "mark": 6.2,
+    "gender": "male",
+    "city": "hcm"
+}
+
+###
