@@ -1,6 +1,6 @@
 import { Response, Request, NextFunction } from 'express'
 
-export const loginValidater = (res: Response, req: Request, next: NextFunction) => {
+export const loginValidater = (req: Request, res: Response, next: NextFunction) => {
   const { username, password } = req.body
   if (!username || !password) {
     return res.status(400).json({
