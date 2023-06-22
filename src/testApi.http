@@ -5,14 +5,11 @@ GET {{baseUrl}}
 
 ###
 
-POST {{baseUrl}}/students
+POST {{baseUrl}}/register
 Content-Type: application/json
 {
-    "name": "hieu",
-    "age": 26,
-    "mark": 6.2,
-    "gender": "male",
-    "city": "hcm"
+    "email": "hieu",
+    "password":"12312321"    ,
 }
 
 ###
