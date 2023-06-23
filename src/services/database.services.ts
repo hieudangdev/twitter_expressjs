@@ -8,7 +8,6 @@ config()
 const username = process.env.DB_USERNAME
 const password = process.env.DB_PASSWORD
 const dbName = process.env.DB_NAME
-const userCollection = process.env.DB_USERS_COLLECTION
 
 const uri = `mongodb+srv://${username}:${password}@clusterhongkong.drtw9hg.mongodb.net/?retryWrites=true&w=majority`
 
@@ -32,7 +31,7 @@ class DatabaseService {
   }
 
   get users(): Collection<User> {
-    return this.db.collection('users')
+    return this.db.collection(process.env.DB_USERS_COLLECTION as string)
   }
 }
 
