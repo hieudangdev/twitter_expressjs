@@ -12,27 +12,27 @@ const dbName = process.env.DB_NAME
 const uri = `mongodb+srv://${username}:${password}@clusterhongkong.drtw9hg.mongodb.net/?retryWrites=true&w=majority`
 
 class DatabaseService {
-  private client: MongoClient
-  private db: Db
-  constructor() {
-    this.client = new MongoClient(uri)
-    this.db = this.client.db(dbName)
-  }
+   private client: MongoClient
+   private db: Db
+   constructor() {
+      this.client = new MongoClient(uri)
+      this.db = this.client.db(dbName)
+   }
 
-  async connect() {
-    try {
-      // Send a ping to confirm a successful connection
-      await this.db.command({ ping: 1 })
-      console.log('connected to MongoDB!')
-    } catch (err) {
-      console.log('Error:', err)
-      throw err
-    }
-  }
+   async connect() {
+      try {
+         // Send a ping to confirm a successful connection
+         await this.db.command({ ping: 1 })
+         console.log('connected to MongoDB!')
+      } catch (err) {
+         console.log('Error:', err)
+         throw err
+      }
+   }
 
-  get users(): Collection<User> {
-    return this.db.collection(process.env.DB_USERS_COLLECTION as string)
-  }
+   get users(): Collection<User> {
+      return this.db.collection(process.env.DB_USERS_COLLECTION as string)
+   }
 }
 
 const databaseService = new DatabaseService()

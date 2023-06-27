@@ -1,11 +1,11 @@
 import { Router } from 'express'
 import { getUsersController, loginController, registerController } from '~/controllers/users.controllers'
 import { RegisterValidator } from '~/middlewares/users.middlewares'
-import { validate } from '~/utils/validation'
+import { handleError } from '~/utils/handlers'
 const usersRouter = Router()
 
 usersRouter.post('/login', loginController)
-usersRouter.post('/register', validate(RegisterValidator), registerController)
+usersRouter.post('/register', RegisterValidator, handleError(registerController))
 usersRouter.get('/', getUsersController)
 
 export default usersRouter

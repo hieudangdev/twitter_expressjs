@@ -1,12 +1,12 @@
 export enum UserVerifyStatus {
-  Unverified,
-  Verified,
-  Banner
+   Unverified,
+   Verified,
+   Banner
 }
 
 export enum tokenType {
-  AccessToken,
-  RefreshToken,
-  ForgotPasswordToken,
-  EmailVerifyToken
+   AccessToken,
+   RefreshToken,
+   ForgotPasswordToken,
+   EmailVerifyToken
 }
