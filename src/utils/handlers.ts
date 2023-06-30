@@ -1,6 +1,6 @@
 import { NextFunction, Request, RequestHandler, Response } from 'express'
 
-export const handleError = (func: RequestHandler) => {
+export const WrapErrorController = (func: RequestHandler) => {
    return async (req: Request, res: Response, next: NextFunction) => {
       try {
          await func(req, res, next)

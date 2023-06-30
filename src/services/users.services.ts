@@ -22,6 +22,9 @@ class UsersServices {
          }
       })
    }
+   private signAccessAndRefreshToken(user_id: string) {
+      return Promise.all([this.signAccessToken(user_id), this.signRefreshToken(user_id)])
+   }
 
    async register(payload: RegisterReqbody) {
       const result = await databaseService.users.insertOne(
@@ -33,10 +36,7 @@ class UsersServices {
       )
 
       const user_id = result.insertedId.toString()
-      const [access_token, refresh_token] = await Promise.all([
-         this.signAccessToken(user_id),
-         this.signRefreshToken(user_id)
-      ])
+      const [access_token, refresh_token] = await this.signAccessAndRefreshToken(user_id)
       return {
          access_token,
          refresh_token
@@ -48,17 +48,18 @@ class UsersServices {
       return Boolean(isExits)
    }
 
+   async login(user_id: string) {
+      const [access_token, refresh_token] = await this.signAccessAndRefreshToken(user_id)
+      return {
+         access_token,
+         refresh_token
+      }
+   }
    getUsers() {
       const result = databaseService.users.find({}).toArray()
       return result
    }
 }
 
-function asd() {
-   const ab = 23
-   if (ab === 23) {
-      console.log('ngu')
-   }
-}
 const userServices = new UsersServices()
 export default userServices

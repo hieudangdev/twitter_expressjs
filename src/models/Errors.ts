@@ -1,5 +1,5 @@
 import HTTPSTATUS from '~/constants/httpStatus'
-import { USER_MESSAGE } from '~/constants/message'
+import { USERS_MESSAGES } from '~/constants/message'
 
 type ErrorsType = Record<
    string,
@@ -20,7 +20,7 @@ export class ErrorWithStatus {
 
 export class EntityError extends ErrorWithStatus {
    errors: ErrorsType
-   constructor({ message = USER_MESSAGE.VALIDATION_ERROR, errors }: { message?: string; errors: ErrorsType }) {
+   constructor({ message = USERS_MESSAGES.VALIDATION_ERROR, errors }: { message?: string; errors: ErrorsType }) {
       super({ message, status: HTTPSTATUS.UNPROCESSABLE_ENTITY })
       this.errors = errors
    }
