@@ -28,3 +28,11 @@ export const getUsersController = async (req: Request, res: Response) => {
    const result = await userServices.getUsers()
    res.json(result)
 }
+
+export const logoutController = async (req: Request, res: Response) => {
+   const { refresh_token } = req.body
+   await userServices.logout(refresh_token)
+   res.json({
+      message: USERS_MESSAGES.LOGOUT_SUCCESS
+   })
+}

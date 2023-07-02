@@ -12,7 +12,6 @@ interface UserType {
    email_verify_token?: string
    forgot_password_token?: string
    verify?: UserVerifyStatus
-
    bio?: string
    location?: string
    website?: string

@@ -1,9 +1,11 @@
-import User from '~/models/schemas/User.schemas'
-import databaseService from './database.services'
+import { ObjectId } from 'mongodb'
+import { tokenType } from '~/constants/enum'
 import { RegisterReqbody } from '~/models/request/user.request'
+import RefreshTokenSchemas from '~/models/schemas/RefreshToken.schemas'
+import User from '~/models/schemas/User.schemas'
 import hashPassword from '~/utils/crypto'
 import { signToken } from '~/utils/jwt'
-import { tokenType } from '~/constants/enum'
+import databaseService from './database.services'
 
 class UsersServices {
    private signAccessToken(user_id: string) {
@@ -37,6 +39,9 @@ class UsersServices {
 
       const user_id = result.insertedId.toString()
       const [access_token, refresh_token] = await this.signAccessAndRefreshToken(user_id)
+      databaseService.refreshToken.insertOne(
+         new RefreshTokenSchemas({ user_id: new ObjectId(user_id), token: refresh_token })
+      )
       return {
          access_token,
          refresh_token
@@ -50,10 +55,17 @@ class UsersServices {
 
    async login(user_id: string) {
       const [access_token, refresh_token] = await this.signAccessAndRefreshToken(user_id)
+      databaseService.refreshToken.insertOne(
+         new RefreshTokenSchemas({ user_id: new ObjectId(user_id), token: refresh_token })
+      )
       return {
          access_token,
          refresh_token
       }
+   }
+   async logout(refresh_token: string) {
+      const result = await databaseService.refreshToken.deleteOne({ token: refresh_token })
+      return result
    }
    getUsers() {
       const result = databaseService.users.find({}).toArray()
