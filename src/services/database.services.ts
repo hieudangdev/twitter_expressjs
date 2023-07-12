@@ -6,18 +6,18 @@ import RefreshToken from '~/models/schemas/RefreshToken.schemas'
 // config dotenv
 config()
 
-const username = process.env.DB_USERNAME
-const password = process.env.DB_PASSWORD
-const dbName = process.env.DB_NAME
+const USERNAME = process.env.DB_USERNAME
+const PASSWORD = process.env.DB_PASSWORD
+const DBNAME = process.env.DB_NAME
 
-const uri = `mongodb+srv://${username}:${password}@clusterhongkong.drtw9hg.mongodb.net/?retryWrites=true&w=majority`
+const uri = `mongodb+srv://${USERNAME}:${PASSWORD}@twittersin.tiydb8p.mongodb.net/?retryWrites=true&w=majority`
 
 class DatabaseService {
    private client: MongoClient
    private db: Db
    constructor() {
       this.client = new MongoClient(uri)
-      this.db = this.client.db(dbName)
+      this.db = this.client.db(DBNAME)
    }
 
    async connect() {
