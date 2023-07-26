@@ -10,6 +10,11 @@ import { config } from 'dotenv'
 import { update } from 'lodash'
 import { USERS_MESSAGES } from '~/constants/message'
 import { VerifyEmailReqbody } from './../models/request/user.request'
+import { error } from 'console'
+import { ErrorWithStatus } from '~/models/Errors'
+import HTTPSTATUS from '~/constants/httpStatus'
+import FollowerSchemas from './../models/schemas/Follower.schemas'
+import Follower from './../models/schemas/Follower.schemas'
 
 config()
 class UsersServices {
@@ -67,6 +72,7 @@ class UsersServices {
       new User({
         ...payload,
         _id: user_id,
+        username: `@${user_id.toString()}`,
         email_verify_token,
         date_of_birth: new Date(payload.date_of_birth),
         password: hashPassword(payload.password)
@@ -77,9 +83,7 @@ class UsersServices {
       user_id: user_id.toString(),
       verify: UserVerifyStatus.Unverified
     })
-    databaseService.refreshToken.insertOne(
-      new RefreshTokenSchemas({ user_id: new ObjectId(user_id), token: refresh_token })
-    )
+    databaseService.refreshToken.insertOne(new RefreshTokenSchemas({ user_id: new ObjectId(user_id), token: refresh_token }))
     return {
       access_token,
       refresh_token,
@@ -97,9 +101,7 @@ class UsersServices {
       user_id,
       verify
     })
-    databaseService.refreshToken.insertOne(
-      new RefreshTokenSchemas({ user_id: new ObjectId(user_id), token: refresh_token })
-    )
+    databaseService.refreshToken.insertOne(new RefreshTokenSchemas({ user_id: new ObjectId(user_id), token: refresh_token }))
     return {
       access_token,
       refresh_token
@@ -238,7 +240,48 @@ class UsersServices {
         }
       }
     )
+
     return user.value
+  }
+  async follow(user_id: string, followed_user_id: string) {
+    const isfollowed = await databaseService.follower.findOne({
+      user_id: new ObjectId(user_id),
+      followed_user_id: new ObjectId(followed_user_id)
+    })
+    if (isfollowed === null) {
+      await databaseService.follower.insertOne(
+        new Follower({
+          user_id: new ObjectId(user_id),
+          followed_user_id: new ObjectId(followed_user_id)
+        })
+      )
+      return {
+        message: USERS_MESSAGES.FOLLOW_SUCCESS
+      }
+    }
+    return {
+      message: USERS_MESSAGES.FOLLOWED
+    }
+  }
+  async getProfile(username: string) {
+    const user = await databaseService.users.findOne(
+      { username },
+      {
+        projection: {
+          password: false,
+          email_verify_token: false,
+          forgot_password_token: false,
+          updated_at: false
+        }
+      }
+    )
+    if (user === null) {
+      throw new ErrorWithStatus({
+        message: USERS_MESSAGES.USER_NOT_FOUND,
+        status: HTTPSTATUS.NOT_FOUND
+      })
+    }
+    return user
   }
 }
 

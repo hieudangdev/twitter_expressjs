@@ -1,8 +1,10 @@
 import { Router } from 'express'
 import {
   VerifyEmailController,
+  followController,
   forgotPasswordController,
   getMeController,
+  getUserProfileController,
   loginController,
   logoutController,
   registerController,
@@ -11,9 +13,11 @@ import {
   updateMeController,
   verifyForgotPasswordController
 } from '~/controllers/users.controllers'
+import { filterMiddleware } from '~/middlewares/common.middlewares'
 import {
   RegisterValidator,
   accessTokenValidator,
+  followValidator,
   forgotPasswordValidator,
   loginValidater,
   refreshTokenValidation,
@@ -23,8 +27,18 @@ import {
   verifyEmailValidator,
   verifyForgotPasswordValidator
 } from '~/middlewares/users.middlewares'
+import { updateMeReqBody } from '~/models/request/user.request'
 import { WrapErrorController } from '~/utils/handlers'
 const usersRouter = Router()
+
+/**
+ * Path:/follow,
+ * Method: POST
+ * description: follower user
+ * body: follow_user_id
+ */
+
+usersRouter.post('/follow', accessTokenValidator, verifiedUserValidator, followValidator, WrapErrorController(followController))
 
 /**
  * Path:/me,
@@ -34,19 +48,20 @@ const usersRouter = Router()
 usersRouter.get('/me', accessTokenValidator, WrapErrorController(getMeController))
 
 /**
+ * Path:/:username,
+ * Method: GET
+ * description: get user profile
+ */
+usersRouter.get('/:username', WrapErrorController(getUserProfileController))
+
+/**
  * Path:/me,
  * Method: PATCH
  * description: update my profile
  * Body: UsersChema
  * headers: { Authorization: 'Bearer <access_token>' }
  */
-usersRouter.patch(
-  '/me',
-  accessTokenValidator,
-  verifiedUserValidator,
-  updateMeValidator,
-  WrapErrorController(updateMeController)
-)
+usersRouter.patch('/me', accessTokenValidator, verifiedUserValidator, updateMeValidator, filterMiddleware<updateMeReqBody>(['name', 'date_of_birth', 'bio', 'location', 'avatar', 'username', 'website', 'cover_photo']), WrapErrorController(updateMeController))
 
 /**
  * Path:/login,
@@ -98,11 +113,7 @@ usersRouter.post('/forgot-password', forgotPasswordValidator, WrapErrorControlle
  * body: {forgot_password_token: string}
  * description:verify forgot password
  */
-usersRouter.post(
-  '/verify-forgot-password',
-  verifyForgotPasswordValidator,
-  WrapErrorController(verifyForgotPasswordController)
-)
+usersRouter.post('/verify-forgot-password', verifyForgotPasswordValidator, WrapErrorController(verifyForgotPasswordController))
 /**
  * Path:/reset-password,
  * Method: POST

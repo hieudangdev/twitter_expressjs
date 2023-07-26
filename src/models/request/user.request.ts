@@ -8,6 +8,12 @@ export interface RegisterReqbody {
   password: string
   confirm_password: string
 }
+export interface getProfileReqParam {
+  username: string
+}
+export interface followProReqBody {
+  followed_user_id: string
+}
 export interface LoginReqBody {
   email: string
   password: string
